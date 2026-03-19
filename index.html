@@ -1,91 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3D Portfolio</title>
+<meta charset="UTF-8" />
+<title>Liquid Dev Portfolio</title>
+
 <style>
-body { margin:0; overflow:hidden; }
-canvas { display:block; }
-#overlay {
-  position:absolute;
-  top:20px;
-  left:20px;
-  color:white;
-  font-family:Arial;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: black;
+  color: white;
+  scroll-behavior: smooth;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 15px;
+  z-index: 10;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+}
+
+section {
+  min-height: 100vh;
+  padding: 100px 50px;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 15px;
+}
+
+.skills span {
+  display: inline-block;
+  margin: 5px;
+  padding: 8px 12px;
+  background: rgba(0,150,255,0.2);
+  border-radius: 10px;
+}
+
+.project {
+  margin-top: 15px;
+}
+
+.music-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
 }
 </style>
 </head>
-<body>
-<div id="overlay">Use mouse to look around • Scroll to zoom</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<!-- NAVBAR -->
+<nav>
+  <a href="#home">Home</a>
+  <a href="#about">About</a>
+  <a href="#skills">Skills</a>
+  <a href="#projects">Projects</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<!-- HERO -->
+<section id="home">
+  <h1>🌊 Liquid Dev</h1>
+  <p>Building immersive web experiences</p>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="card">
+    <h2>About Me</h2>
+    <p>I’m a developer who loves creative coding, animations, and interactive UI.</p>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="card">
+    <h2>Skills</h2>
+    <div class="skills">
+      <span>HTML</span>
+      <span>CSS</span>
+      <span>JavaScript</span>
+      <span>React</span>
+      <span>Three.js</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="card">
+    <h2>Projects</h2>
+
+    <div class="project">
+      <h3>🌊 Water App</h3>
+      <p>Interactive ripple simulation</p>
+    </div>
+
+    <div class="project">
+      <h3>🎧 Music Visualizer</h3>
+      <p>Audio-reactive animations</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="card">
+    <h2>Contact</h2>
+    <p>Email: you@example.com</p>
+  </div>
+</section>
+
+<!-- MUSIC BUTTON -->
+<button class="music-btn" onclick="toggleMusic()">🎧 Music</button>
+
+<audio id="bgMusic" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-// SCENE
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-// CAMERA
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-camera.position.z = 5;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-// RENDERER
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+let drops = [];
 
-// CUBE (your "project")
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ffcc, wireframe: true });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-
-// PARTICLES (stars)
-const particlesGeometry = new THREE.BufferGeometry();
-const particlesCount = 2000;
-const posArray = new Float32Array(particlesCount * 3);
-
-for(let i=0;i<particlesCount*3;i++){
-  posArray[i] = (Math.random() - 0.5) * 50;
+function createDrop(x, y) {
+  drops.push({ x, y, radius: 0, alpha: 1 });
 }
 
-particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-const particlesMaterial = new THREE.PointsMaterial({ size: 0.05 });
-const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-scene.add(particlesMesh);
-
-// MOUSE MOVE
-let mouseX = 0;
-let mouseY = 0;
-
-document.addEventListener('mousemove', (event) => {
-  mouseX = (event.clientX / window.innerWidth - 0.5) * 2;
-  mouseY = (event.clientY / window.innerHeight - 0.5) * 2;
+canvas.addEventListener("click", (e) => {
+  createDrop(e.clientX, e.clientY);
 });
 
-// ANIMATE
 function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  drops.forEach((drop, i) => {
+    drop.radius += 1.5;
+    drop.alpha -= 0.01;
+
+    ctx.beginPath();
+    ctx.arc(drop.x, drop.y, drop.radius, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(0, 150, 255, ${drop.alpha})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    if (drop.alpha <= 0) drops.splice(i, 1);
+  });
+
   requestAnimationFrame(animate);
-
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
-
-  camera.position.x += (mouseX - camera.position.x) * 0.05;
-  camera.position.y += (-mouseY - camera.position.y) * 0.05;
-  camera.lookAt(scene.position);
-
-  renderer.render(scene, camera);
 }
 
 animate();
 
-// RESPONSIVE
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+// MUSIC
+const music = document.getElementById("bgMusic");
+let playing = false;
+
+function toggleMusic() {
+  if (playing) {
+    music.pause();
+  } else {
+    music.play();
+  }
+  playing = !playing;
+}
 </script>
 
 </body>
