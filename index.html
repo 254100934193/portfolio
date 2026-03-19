@@ -3,82 +3,206 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Portfolio</title>
+  <title>Next Level Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Poppins', sans-serif; background: #0f172a; color: #e2e8f0; }
-    header { padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; }
-    header h1 { color: #38bdf8; }
-    nav a { margin-left: 20px; color: #e2e8f0; text-decoration: none; }
-    nav a:hover { color: #38bdf8; }
+    * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
 
-    .hero { height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-    .hero h2 { font-size: 3rem; }
-    .hero span { color: #38bdf8; }
-    .hero p { margin: 20px 0; }
-    .btn { padding: 10px 20px; background: #38bdf8; border: none; cursor: pointer; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #e2e8f0;
+      transition: 0.3s;
+    }
 
-    section { padding: 60px 50px; }
-    .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-    .card { background: #1e293b; padding: 20px; border-radius: 10px; }
+    .light-mode {
+      background: #f1f5f9;
+      color: #020617;
+    }
 
-    footer { text-align: center; padding: 20px; background: #020617; }
+    header {
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(2, 6, 23, 0.7);
+    }
+
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      background: #38bdf8;
+      left: 0;
+      bottom: -5px;
+      transition: 0.3s;
+    }
+
+    nav a:hover::after { width: 100%; }
+
+    .toggle {
+      cursor: pointer;
+      padding: 5px 10px;
+      border: 1px solid #38bdf8;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .hero {
+      height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero h2 { font-size: 2.8rem; }
+
+    .typing {
+      color: #38bdf8;
+      border-right: 2px solid #38bdf8;
+      padding-right: 5px;
+      animation: blink 0.7s infinite;
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    .btn {
+      margin-top: 15px;
+      padding: 12px 25px;
+      background: linear-gradient(45deg, #38bdf8, #6366f1);
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      color: white;
+    }
+
+    section { padding: 70px 40px; max-width: 1000px; margin: auto; }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      transition: 0.3s;
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>MY PORTFOLIO WEBSITE</h1>
+  <h1>MyPortfolio</h1>
   <nav>
     <a href="#">Home</a>
-    <a href="#about">About</a>
     <a href="#projects">Projects</a>
-    <a href="#contact">contacts</a>
+    <span class="toggle" onclick="toggleMode()">Toggle Mode</span>
   </nav>
 </header>
 
 <section class="hero">
-  <h2>Hello, I'm <span>Mungai Brian</span></h2>
-  <p>Full Stack Developer Majoring mainly on HTML,CSS And Javascript | Problem Solver | Tech Enthusiast</p>
-  <button class="btn">View My Work</button>
-</section>
-
-<section id="about">
-  <h2>About Me</h2>
-  <p>MY NAME IS MUNGAi BRIAN. I am a passionate developer skilled in building modern web applications using JavaScript, React, and Node.js,I'm also a whatsapp bot developer
-    I strive to bring innovative solutions to life.When im not coding, I enjoy exploring new technologies and contributing to the developer community or indulging in my love for editing.</p>
+  <h2>Hi, I'm Your Name</h2>
+  <h3 class="typing" id="typing"></h3>
+  <button class="btn" onclick="scrollToProjects()">See Projects</button>
 </section>
 
 <section id="projects">
   <h2>Projects</h2>
   <div class="projects">
+
     <div class="card">
-      <h3>MY BOT PROJECT</h3>
-      <p>my first bot project was yobih bug bot which took most of my time to develop,but since I was dedicated to devoloping it I didnt give up on it
-        .The most challenging part was debugging the code and making sure it responded correctly to user inputs.But finally I was able to complete it and it became one of the best bots in univers to ever exist
-        .</p>
+      <img src="https://via.placeholder.com/300" alt="project">
+      <h3>Project One</h3>
+      <p>Cool project description.</p>
     </div>
+
     <div class="card">
+      <img src="https://via.placeholder.com/300" alt="project">
       <h3>Project Two</h3>
-      <p>MY first website project was a simple portfolio site built with HTML and CSS.It was a great learning experience
-        I just look at it and feel proud of what I accomplished.</p>
+      <p>Another awesome project.</p>
     </div>
-    <div class="card">
-      <h3>Project Three</h3>
-      <p>MY first mobile app project was a simple todo list app built with React Native.</p>
-    </div>
+
   </div>
 </section>
 
-<section id="contact">
-  <h2>Contact</h2>
-  <p>Email: mungaibrianm@gmail.com</p>
-</section>
-
 <footer>
-  <p>© 2026 Mungai Yobih. All rights reserved.</p>
+  <p>© 2026 Your Name</p>
 </footer>
+
+<script>
+  function scrollToProjects() {
+    document.getElementById('projects').scrollIntoView();
+  }
+
+  function toggleMode() {
+    document.body.classList.toggle('light-mode');
+  }
+
+  const words = ["Web Developer", "JavaScript Learner", "Future Engineer"];
+  let i = 0;
+  let j = 0;
+  let currentWord = "";
+  let isDeleting = false;
+
+  function type() {
+    currentWord = words[i];
+    if (isDeleting) {
+      document.getElementById("typing").textContent = currentWord.substring(0, j--);
+    } else {
+      document.getElementById("typing").textContent = currentWord.substring(0, j++);
+    }
+
+    if (!isDeleting && j === currentWord.length) {
+      isDeleting = true;
+      setTimeout(type, 1000);
+      return;
+    }
+
+    if (isDeleting && j === 0) {
+      isDeleting = false;
+      i = (i + 1) % words.length;
+    }
+
+    setTimeout(type, isDeleting ? 50 : 100);
+  }
+
+  type();
+</script>
 
 </body>
 </html>
