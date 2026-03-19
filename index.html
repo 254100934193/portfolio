@@ -11,7 +11,7 @@
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background: url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
       color: #e2e8f0;
       transition: 0.3s;
     }
@@ -58,6 +58,16 @@
       border: 1px solid #38bdf8;
       border-radius: 20px;
       font-size: 12px;
+      margin-left: 20px;
+    }
+
+    .music-btn {
+      cursor: pointer;
+      padding: 5px 10px;
+      border: 1px solid #38bdf8;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-left: 10px;
     }
 
     .hero {
@@ -126,12 +136,18 @@
 </head>
 <body>
 
+<!-- Background Music -->
+<audio id="bg-music" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
 <header>
   <h1>MyPortfolio</h1>
   <nav>
     <a href="#">Home</a>
     <a href="#projects">Projects</a>
-    <span class="toggle" onclick="toggleMode()">Toggle Mode</span>
+    <span class="toggle" onclick="toggleMode()">Mode</span>
+    <span class="music-btn" onclick="toggleMusic()">Music</span>
   </nav>
 </header>
 
@@ -173,6 +189,20 @@
     document.body.classList.toggle('light-mode');
   }
 
+  // MUSIC CONTROL
+  const music = document.getElementById("bg-music");
+  let isPlaying = false;
+
+  function toggleMusic() {
+    if (isPlaying) {
+      music.pause();
+    } else {
+      music.play();
+    }
+    isPlaying = !isPlaying;
+  }
+
+  // TYPING EFFECT
   const words = ["Web Developer", "JavaScript Learner", "Future Engineer"];
   let i = 0;
   let j = 0;
