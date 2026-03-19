@@ -3,168 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HACKING SYSTEM MADE BY YOBIH</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<title>Professional Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
-  font-family:'Share Tech Mono', monospace;
-  background:black;
-  color:#00ffcc;
-  overflow:hidden;
+  font-family:'Inter',sans-serif;
+  background:#f8fafc;
+  color:#0f172a;
 }
-canvas{position:fixed;top:0;left:0;z-index:-1}
-#terminal{padding:20px;height:100vh;overflow-y:auto}
-.line{margin:5px 0}
-input{background:black;border:none;color:#00ffcc;font-family:inherit;outline:none}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  padding:20px 40px;
+  background:white;
+  box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+nav a{
+  margin-left:20px;
+  text-decoration:none;
+  color:#334155;
+  font-weight:500;
+}
+
+.hero{
+  padding:80px 40px;
+  text-align:center;
+}
+
+.hero h1{
+  font-size:2.5rem;
+}
+
+.hero p{
+  margin-top:10px;
+  color:#64748b;
+}
+
+.btn{
+  margin-top:20px;
+  padding:10px 20px;
+  border:none;
+  background:#2563eb;
+  color:white;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+section{
+  padding:60px 40px;
+  max-width:1000px;
+  margin:auto;
+}
+
+h2{margin-bottom:20px}
+
+.skills span{
+  display:inline-block;
+  background:#e2e8f0;
+  padding:8px 12px;
+  margin:5px;
+  border-radius:5px;
+}
+
+.projects{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.05);
+}
+
+footer{
+  text-align:center;
+  padding:20px;
+  color:#64748b;
+}
 </style>
 </head>
 <body>
 
-<canvas id="matrix"></canvas>
-<div id="terminal"></div>
+<header>
+  <h2>Your Name</h2>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
 
-<audio id="typeSound" src="https://www.soundjay.com/mechanical/keyboard-1.mp3"></audio>
+<section class="hero">
+  <h1>Frontend Developer</h1>
+  <p>I build clean and responsive web applications.</p>
+  <button class="btn" onclick="scrollToProjects()">View Projects</button>
+</section>
+
+<section id="about">
+  <h2>About Me</h2>
+  <p>I am a developer passionate about building modern web applications using clean code and best practices.</p>
+</section>
+
+<section>
+  <h2>Skills</h2>
+  <div class="skills">
+    <span>HTML</span>
+    <span>CSS</span>
+    <span>JavaScript</span>
+    <span>React</span>
+  </div>
+</section>
+
+<section id="projects">
+  <h2>Projects</h2>
+  <div class="projects">
+
+    <div class="card">
+      <h3>Portfolio Website</h3>
+      <p>Personal portfolio showcasing my work.</p>
+    </div>
+
+    <div class="card">
+      <h3>To-Do App</h3>
+      <p>Simple productivity app using JavaScript.</p>
+    </div>
+
+  </div>
+</section>
+
+<section id="contact">
+  <h2>Contact</h2>
+  <p>Email: your@email.com</p>
+  <p>GitHub: github.com/yourusername</p>
+  <p>LinkedIn: linkedin.com/in/yourprofile</p>
+</section>
+
+<footer>
+  <p>© 2026 Your Name</p>
+</footer>
 
 <script>
-// MATRIX
-const canvas = document.getElementById("matrix");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const letters = "01";
-const fontSize = 14;
-const columns = canvas.width/fontSize;
-const drops = Array(Math.floor(columns)).fill(1);
-
-function draw(){
-  ctx.fillStyle = "rgba(0,0,0,0.05)";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = "#0f0";
-  ctx.font = fontSize+"px monospace";
-  drops.forEach((y,i)=>{
-    const text = letters[Math.floor(Math.random()*letters.length)];
-    ctx.fillText(text,i*fontSize,y*fontSize);
-    if(y*fontSize>canvas.height && Math.random()>0.975) drops[i]=0;
-    drops[i]++;
-  });
+function scrollToProjects(){
+  document.getElementById('projects').scrollIntoView();
 }
-setInterval(draw,35);
-
-// TERMINAL
-const terminal = document.getElementById("terminal");
-const sound = document.getElementById("typeSound");
-
-function printLine(text){
-  const div=document.createElement("div");
-  div.className="line";
-  div.textContent=text;
-  terminal.appendChild(div);
-  terminal.scrollTop = terminal.scrollHeight;
-}
-
-function createInput(){
-  const line=document.createElement("div");
-  const input=document.createElement("input");
-  line.appendChild(document.createTextNode("> "));
-  line.appendChild(input);
-  terminal.appendChild(line);
-  input.focus();
-
-  input.addEventListener("input",()=>{
-    sound.currentTime=0;
-    sound.play();
-  });
-
-  input.addEventListener("keydown",function(e){
-    if(e.key==="Enter"){
-      handleCommand(input.value);
-      input.disabled=true;
-      createInput();
-    }
-  });
-}
-
-function handleCommand(cmd){
-  cmd=cmd.toLowerCase();
-
-  if(cmd==="help"){
-    printLine("Commands: help, about, projects, skills, contact, github, clear");
-  }
-  else if(cmd==="about"){
-    printLine("I am a creative developer building next-level web experiences and hacking systems,,,Call me Dev Yobih.");
-  }
-  else if(cmd==="projects"){
-    printLine("Loading projects from GitHub...");
-    fetch('https://api.github.com/users/yourusername/repos')
-    .then(res=>res.json())
-    .then(data=>{
-      data.slice(0,5).forEach(repo=>{
-        printLine(repo.name + " → " + repo.html_url);
-      });
-    });
-  }
-  else if(cmd==="skills"){
-    printLine("HTML | CSS | JavaScript | Learning React");
-  }
-  else if(cmd==="contact"){
-    printLine("Email: mungaibrianm@gmail.com");
-  }
-  else if(cmd==="github"){
-    window.open("https://github.com/254100934193?tab=repositories");
-  }
-  else if(cmd==="clear"){
-    terminal.innerHTML="";
-  }
-  else{
-    printLine("Unknown command. Type 'help'");
-  }
-}
-
-// LOGIN SYSTEM
-const password = "1234";
-
-function login(){
-  printLine("Enter password:");
-  const input=document.createElement("input");
-  terminal.appendChild(input);
-  input.focus();
-
-  input.addEventListener("keydown",function(e){
-    if(e.key==="Enter"){
-      if(input.value===password){
-        printLine("Access Granted");
-        createInput();
-      }else{
-        printLine("Access Denied");
-        login();
-      }
-    }
-  });
-}
-
-// BOOT
-const boot=[
-"> Initializing system...,,BE CAREFUL YOBIH CAN ACCESS YOUR INFO.. hahaha",
-"> Loading modules...",
-"> Connecting to GitHub...",
-"> Secure login required"
-];
-
-let i=0;
-function bootSeq(){
-  if(i<boot.length){
-    printLine(boot[i]);
-    i++;
-    setTimeout(bootSeq,500);
-  }else{
-    login();
-  }
-}
-
-bootSeq();
 </script>
 
 </body>
