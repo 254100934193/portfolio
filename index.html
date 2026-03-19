@@ -3,83 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INSANE Cyber Portfolio</title>
+<title>LEGEND MODE Portfolio</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
   font-family:'Share Tech Mono', monospace;
+  background:black;
   color:#00ffcc;
   overflow:hidden;
-  background:black;
 }
-
-/* MATRIX CANVAS */
 canvas{position:fixed;top:0;left:0;z-index:-1}
-
-/* TERMINAL */
-.terminal{
-  padding:20px;
-}
-
-.line{
-  margin:5px 0;
-}
-
-.cursor{
-  display:inline-block;
-  width:10px;
-  background:#00ffcc;
-  animation:blink 1s infinite;
-}
-
-@keyframes blink{
-  50%{opacity:0}
-}
-
-/* GLITCH TEXT */
-.glitch{
-  font-size:2rem;
-  position:relative;
-}
-
-.glitch::before,
-.glitch::after{
-  content:attr(data-text);
-  position:absolute;
-  left:0;
-}
-
-.glitch::before{
-  animation:glitch1 0.5s infinite;
-  color:red;
-}
-
-.glitch::after{
-  animation:glitch2 0.5s infinite;
-  color:blue;
-}
-
-@keyframes glitch1{
-  0%{transform:translate(1px,1px)}
-  50%{transform:translate(-1px,-1px)}
-  100%{transform:translate(1px,-1px)}
-}
-
-@keyframes glitch2{
-  0%{transform:translate(-1px,0)}
-  50%{transform:translate(1px,1px)}
-  100%{transform:translate(-1px,1px)}
-}
-
+#terminal{padding:20px;height:100vh;overflow-y:auto}
+.line{margin:5px 0}
+input{background:black;border:none;color:#00ffcc;font-family:inherit;outline:none}
 </style>
 </head>
 <body>
 
 <canvas id="matrix"></canvas>
+<div id="terminal"></div>
 
-<div class="terminal" id="terminal"></div>
+<audio id="typeSound" src="https://www.soundjay.com/mechanical/keyboard-1.mp3"></audio>
 
 <script>
 // MATRIX
@@ -96,10 +42,8 @@ const drops = Array(Math.floor(columns)).fill(1);
 function draw(){
   ctx.fillStyle = "rgba(0,0,0,0.05)";
   ctx.fillRect(0,0,canvas.width,canvas.height);
-
   ctx.fillStyle = "#0f0";
   ctx.font = fontSize+"px monospace";
-
   drops.forEach((y,i)=>{
     const text = letters[Math.floor(Math.random()*letters.length)];
     ctx.fillText(text,i*fontSize,y*fontSize);
@@ -109,69 +53,118 @@ function draw(){
 }
 setInterval(draw,35);
 
-// TERMINAL TYPING
+// TERMINAL
 const terminal = document.getElementById("terminal");
-const commands = [
-  "> Initializing system...",
-  "> Access granted",
-  "> Loading portfolio.exe",
-  "> Welcome, Developer",
-  "> Skills: HTML CSS JS",
-  "> Projects loaded",
-  "> Ready..."
+const sound = document.getElementById("typeSound");
+
+function printLine(text){
+  const div=document.createElement("div");
+  div.className="line";
+  div.textContent=text;
+  terminal.appendChild(div);
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+function createInput(){
+  const line=document.createElement("div");
+  const input=document.createElement("input");
+  line.appendChild(document.createTextNode("> "));
+  line.appendChild(input);
+  terminal.appendChild(line);
+  input.focus();
+
+  input.addEventListener("input",()=>{
+    sound.currentTime=0;
+    sound.play();
+  });
+
+  input.addEventListener("keydown",function(e){
+    if(e.key==="Enter"){
+      handleCommand(input.value);
+      input.disabled=true;
+      createInput();
+    }
+  });
+}
+
+function handleCommand(cmd){
+  cmd=cmd.toLowerCase();
+
+  if(cmd==="help"){
+    printLine("Commands: help, about, projects, skills, contact, github, clear");
+  }
+  else if(cmd==="about"){
+    printLine("I am a creative developer building next-level web experiences.");
+  }
+  else if(cmd==="projects"){
+    printLine("Loading projects from GitHub...");
+    fetch('https://api.github.com/users/yourusername/repos')
+    .then(res=>res.json())
+    .then(data=>{
+      data.slice(0,5).forEach(repo=>{
+        printLine(repo.name + " → " + repo.html_url);
+      });
+    });
+  }
+  else if(cmd==="skills"){
+    printLine("HTML | CSS | JavaScript | Learning React");
+  }
+  else if(cmd==="contact"){
+    printLine("Email: your@email.com");
+  }
+  else if(cmd==="github"){
+    window.open("https://github.com/yourusername","_blank");
+  }
+  else if(cmd==="clear"){
+    terminal.innerHTML="";
+  }
+  else{
+    printLine("Unknown command. Type 'help'");
+  }
+}
+
+// LOGIN SYSTEM
+const password = "1234";
+
+function login(){
+  printLine("Enter password:");
+  const input=document.createElement("input");
+  terminal.appendChild(input);
+  input.focus();
+
+  input.addEventListener("keydown",function(e){
+    if(e.key==="Enter"){
+      if(input.value===password){
+        printLine("Access Granted");
+        createInput();
+      }else{
+        printLine("Access Denied");
+        login();
+      }
+    }
+  });
+}
+
+// BOOT
+const boot=[
+"> Initializing system...",
+"> Loading modules...",
+"> Connecting to GitHub...",
+"> Secure login required"
 ];
 
-let lineIndex = 0;
-
-function typeLine(text, callback){
-  let i=0;
-  const line = document.createElement("div");
-  line.className="line";
-  terminal.appendChild(line);
-
-  function type(){
-    line.innerHTML = text.substring(0,i)+"<span class='cursor'></span>";
+let i=0;
+function bootSeq(){
+  if(i<boot.length){
+    printLine(boot[i]);
     i++;
-    if(i<=text.length){
-      setTimeout(type,40);
-    }else{
-      line.innerHTML = text;
-      callback && callback();
-    }
-  }
-  type();
-}
-
-function runTerminal(){
-  if(lineIndex < commands.length){
-    typeLine(commands[lineIndex],()=>{
-      lineIndex++;
-      runTerminal();
-    });
+    setTimeout(bootSeq,500);
   }else{
-    showMain();
+    login();
   }
 }
 
-runTerminal();
-
-// SHOW MAIN CONTENT
-function showMain(){
-  const title = document.createElement("h1");
-  title.className = "glitch";
-  title.setAttribute("data-text","ACCESS GRANTED");
-  title.innerText = "ACCESS GRANTED";
-
-  const btn = document.createElement("button");
-  btn.innerText = "ENTER SYSTEM";
-  btn.style.marginTop = "20px";
-  btn.style.padding = "10px";
-  btn.onclick = ()=>alert("Welcome to your portfolio 😎");
-
-  terminal.appendChild(title);
-  terminal.appendChild(btn);
-}
-
+bootSeq();
 </script>
 
 </body>
