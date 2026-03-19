@@ -1,237 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Next Level Portfolio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INSANE Cyber Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Share Tech Mono', monospace;
+  color:#00ffcc;
+  overflow:hidden;
+  background:black;
+}
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover;
-      color: #e2e8f0;
-      transition: 0.3s;
-    }
+/* MATRIX CANVAS */
+canvas{position:fixed;top:0;left:0;z-index:-1}
 
-    .light-mode {
-      background: #f1f5f9;
-      color: #020617;
-    }
+/* TERMINAL */
+.terminal{
+  padding:20px;
+}
 
-    header {
-      padding: 20px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      backdrop-filter: blur(10px);
-      background: rgba(2, 6, 23, 0.7);
-    }
+.line{
+  margin:5px 0;
+}
 
-    nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: inherit;
-      position: relative;
-    }
+.cursor{
+  display:inline-block;
+  width:10px;
+  background:#00ffcc;
+  animation:blink 1s infinite;
+}
 
-    nav a::after {
-      content: '';
-      position: absolute;
-      width: 0;
-      height: 2px;
-      background: #38bdf8;
-      left: 0;
-      bottom: -5px;
-      transition: 0.3s;
-    }
+@keyframes blink{
+  50%{opacity:0}
+}
 
-    nav a:hover::after { width: 100%; }
+/* GLITCH TEXT */
+.glitch{
+  font-size:2rem;
+  position:relative;
+}
 
-    .toggle {
-      cursor: pointer;
-      padding: 5px 10px;
-      border: 1px solid #38bdf8;
-      border-radius: 20px;
-      font-size: 12px;
-      margin-left: 20px;
-    }
+.glitch::before,
+.glitch::after{
+  content:attr(data-text);
+  position:absolute;
+  left:0;
+}
 
-    .music-btn {
-      cursor: pointer;
-      padding: 5px 10px;
-      border: 1px solid #38bdf8;
-      border-radius: 20px;
-      font-size: 12px;
-      margin-left: 10px;
-    }
+.glitch::before{
+  animation:glitch1 0.5s infinite;
+  color:red;
+}
 
-    .hero {
-      height: 90vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
+.glitch::after{
+  animation:glitch2 0.5s infinite;
+  color:blue;
+}
 
-    .hero h2 { font-size: 2.8rem; }
+@keyframes glitch1{
+  0%{transform:translate(1px,1px)}
+  50%{transform:translate(-1px,-1px)}
+  100%{transform:translate(1px,-1px)}
+}
 
-    .typing {
-      color: #38bdf8;
-      border-right: 2px solid #38bdf8;
-      padding-right: 5px;
-      animation: blink 0.7s infinite;
-    }
+@keyframes glitch2{
+  0%{transform:translate(-1px,0)}
+  50%{transform:translate(1px,1px)}
+  100%{transform:translate(-1px,1px)}
+}
 
-    @keyframes blink {
-      50% { border-color: transparent; }
-    }
-
-    .btn {
-      margin-top: 15px;
-      padding: 12px 25px;
-      background: linear-gradient(45deg, #38bdf8, #6366f1);
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      color: white;
-    }
-
-    section { padding: 70px 40px; max-width: 1000px; margin: auto; }
-
-    .projects {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      background: rgba(255,255,255,0.05);
-      padding: 20px;
-      border-radius: 15px;
-      backdrop-filter: blur(10px);
-      transition: 0.3s;
-    }
-
-    .card img {
-      width: 100%;
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
-
-    .card:hover {
-      transform: scale(1.05);
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-    }
-  </style>
+</style>
 </head>
 <body>
 
-<!-- Background Music -->
-<audio id="bg-music" loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
+<canvas id="matrix"></canvas>
 
-<header>
-  <h1>MyPortfolio</h1>
-  <nav>
-    <a href="#">Home</a>
-    <a href="#projects">Projects</a>
-    <span class="toggle" onclick="toggleMode()">Mode</span>
-    <span class="music-btn" onclick="toggleMusic()">Music</span>
-  </nav>
-</header>
-
-<section class="hero">
-  <h2>Hi, I'm Your Name</h2>
-  <h3 class="typing" id="typing"></h3>
-  <button class="btn" onclick="scrollToProjects()">See Projects</button>
-</section>
-
-<section id="projects">
-  <h2>Projects</h2>
-  <div class="projects">
-
-    <div class="card">
-      <img src="https://via.placeholder.com/300" alt="project">
-      <h3>Project One</h3>
-      <p>Cool project description.</p>
-    </div>
-
-    <div class="card">
-      <img src="https://via.placeholder.com/300" alt="project">
-      <h3>Project Two</h3>
-      <p>Another awesome project.</p>
-    </div>
-
-  </div>
-</section>
-
-<footer>
-  <p>© 2026 Your Name</p>
-</footer>
+<div class="terminal" id="terminal"></div>
 
 <script>
-  function scrollToProjects() {
-    document.getElementById('projects').scrollIntoView();
-  }
+// MATRIX
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-  function toggleMode() {
-    document.body.classList.toggle('light-mode');
-  }
+const letters = "01";
+const fontSize = 14;
+const columns = canvas.width/fontSize;
+const drops = Array(Math.floor(columns)).fill(1);
 
-  // MUSIC CONTROL
-  const music = document.getElementById("bg-music");
-  let isPlaying = false;
+function draw(){
+  ctx.fillStyle = "rgba(0,0,0,0.05)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  function toggleMusic() {
-    if (isPlaying) {
-      music.pause();
-    } else {
-      music.play();
+  ctx.fillStyle = "#0f0";
+  ctx.font = fontSize+"px monospace";
+
+  drops.forEach((y,i)=>{
+    const text = letters[Math.floor(Math.random()*letters.length)];
+    ctx.fillText(text,i*fontSize,y*fontSize);
+    if(y*fontSize>canvas.height && Math.random()>0.975) drops[i]=0;
+    drops[i]++;
+  });
+}
+setInterval(draw,35);
+
+// TERMINAL TYPING
+const terminal = document.getElementById("terminal");
+const commands = [
+  "> Initializing system...",
+  "> Access granted",
+  "> Loading portfolio.exe",
+  "> Welcome, Developer",
+  "> Skills: HTML CSS JS",
+  "> Projects loaded",
+  "> Ready..."
+];
+
+let lineIndex = 0;
+
+function typeLine(text, callback){
+  let i=0;
+  const line = document.createElement("div");
+  line.className="line";
+  terminal.appendChild(line);
+
+  function type(){
+    line.innerHTML = text.substring(0,i)+"<span class='cursor'></span>";
+    i++;
+    if(i<=text.length){
+      setTimeout(type,40);
+    }else{
+      line.innerHTML = text;
+      callback && callback();
     }
-    isPlaying = !isPlaying;
   }
-
-  // TYPING EFFECT
-  const words = ["Web Developer", "JavaScript Learner", "Future Engineer"];
-  let i = 0;
-  let j = 0;
-  let currentWord = "";
-  let isDeleting = false;
-
-  function type() {
-    currentWord = words[i];
-    if (isDeleting) {
-      document.getElementById("typing").textContent = currentWord.substring(0, j--);
-    } else {
-      document.getElementById("typing").textContent = currentWord.substring(0, j++);
-    }
-
-    if (!isDeleting && j === currentWord.length) {
-      isDeleting = true;
-      setTimeout(type, 1000);
-      return;
-    }
-
-    if (isDeleting && j === 0) {
-      isDeleting = false;
-      i = (i + 1) % words.length;
-    }
-
-    setTimeout(type, isDeleting ? 50 : 100);
-  }
-
   type();
+}
+
+function runTerminal(){
+  if(lineIndex < commands.length){
+    typeLine(commands[lineIndex],()=>{
+      lineIndex++;
+      runTerminal();
+    });
+  }else{
+    showMain();
+  }
+}
+
+runTerminal();
+
+// SHOW MAIN CONTENT
+function showMain(){
+  const title = document.createElement("h1");
+  title.className = "glitch";
+  title.setAttribute("data-text","ACCESS GRANTED");
+  title.innerText = "ACCESS GRANTED";
+
+  const btn = document.createElement("button");
+  btn.innerText = "ENTER SYSTEM";
+  btn.style.marginTop = "20px";
+  btn.style.padding = "10px";
+  btn.onclick = ()=>alert("Welcome to your portfolio 😎");
+
+  terminal.appendChild(title);
+  terminal.appendChild(btn);
+}
+
 </script>
 
 </body>
