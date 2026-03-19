@@ -3,90 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Professional Portfolio</title>
+<title>Ultimate Portfolio • Polished</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:'Inter',sans-serif;
-  background:#f8fafc;
-  color:#0f172a;
-}
+body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a}
 
-header{
-  display:flex;
-  justify-content:space-between;
-  padding:20px 40px;
-  background:white;
-  box-shadow:0 2px 10px rgba(0,0,0,0.05);
-}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 36px;background:#ffffff;box-shadow:0 2px 12px rgba(0,0,0,0.06);position:sticky;top:0;z-index:10}
+nav a{margin-left:18px;text-decoration:none;color:#334155;font-weight:500}
+nav a:hover{color:#2563eb}
 
-nav a{
-  margin-left:20px;
-  text-decoration:none;
-  color:#334155;
-  font-weight:500;
-}
+.hero{padding:90px 20px;text-align:center}
+.hero h1{font-size:2.6rem}
+.hero p{margin-top:10px;color:#64748b}
+.btn{margin-top:20px;padding:12px 22px;border:none;background:#2563eb;color:#fff;border-radius:6px;cursor:pointer}
+.btn.secondary{background:#0ea5e9;margin-left:10px}
 
-.hero{
-  padding:80px 40px;
-  text-align:center;
-}
-
-.hero h1{
-  font-size:2.5rem;
-}
-
-.hero p{
-  margin-top:10px;
-  color:#64748b;
-}
-
-.btn{
-  margin-top:20px;
-  padding:10px 20px;
-  border:none;
-  background:#2563eb;
-  color:white;
-  border-radius:5px;
-  cursor:pointer;
-}
-
-section{
-  padding:60px 40px;
-  max-width:1000px;
-  margin:auto;
-}
-
+section{padding:60px 20px;max-width:1000px;margin:auto}
 h2{margin-bottom:20px}
 
-.skills span{
-  display:inline-block;
-  background:#e2e8f0;
-  padding:8px 12px;
-  margin:5px;
-  border-radius:5px;
-}
+.skills span{display:inline-block;background:#e2e8f0;padding:8px 12px;margin:5px;border-radius:6px;font-size:14px}
 
-.projects{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:20px;
-}
+.projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.06);transition:0.2s}
+.card:hover{transform:translateY(-5px)}
+.card a{display:inline-block;margin-top:10px;color:#2563eb;text-decoration:none;font-size:14px}
 
-.card{
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.05);
-}
+footer{text-align:center;padding:25px;color:#64748b}
 
-footer{
-  text-align:center;
-  padding:20px;
-  color:#64748b;
-}
+/* TERMINAL OVERLAY */
+#terminalOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;color:#00ffcc;display:none;flex-direction:column;font-family:monospace;z-index:20}
+#terminal{padding:20px;flex:1;overflow-y:auto}
+input{background:#000;border:none;color:#00ffcc;outline:none;font-family:inherit}
+.closeBtn{position:absolute;top:10px;right:20px;color:#fff;cursor:pointer}
+
 </style>
 </head>
 <body>
@@ -95,64 +46,102 @@ footer{
   <h2>Your Name</h2>
   <nav>
     <a href="#">Home</a>
-    <a href="#about">About</a>
     <a href="#projects">Projects</a>
     <a href="#contact">Contact</a>
+    <a href="#" onclick="openTerminal()">Terminal</a>
   </nav>
 </header>
 
 <section class="hero">
   <h1>Frontend Developer</h1>
-  <p>I build clean and responsive web applications.</p>
+  <p>I build clean, fast, and user-friendly web applications.</p>
   <button class="btn" onclick="scrollToProjects()">View Projects</button>
-</section>
-
-<section id="about">
-  <h2>About Me</h2>
-  <p>I am a developer passionate about building modern web applications using clean code and best practices.</p>
+  <button class="btn secondary" onclick="downloadCV()">Download CV</button>
 </section>
 
 <section>
   <h2>Skills</h2>
   <div class="skills">
-    <span>HTML</span>
-    <span>CSS</span>
-    <span>JavaScript</span>
-    <span>React</span>
+    <span>HTML</span><span>CSS</span><span>JavaScript</span><span>React</span>
   </div>
 </section>
 
 <section id="projects">
   <h2>Projects</h2>
-  <div class="projects">
-
-    <div class="card">
-      <h3>Portfolio Website</h3>
-      <p>Personal portfolio showcasing my work.</p>
-    </div>
-
-    <div class="card">
-      <h3>To-Do App</h3>
-      <p>Simple productivity app using JavaScript.</p>
-    </div>
-
-  </div>
+  <div class="projects" id="projectsContainer"></div>
 </section>
 
 <section id="contact">
   <h2>Contact</h2>
   <p>Email: your@email.com</p>
-  <p>GitHub: github.com/yourusername</p>
-  <p>LinkedIn: linkedin.com/in/yourprofile</p>
+  <p><a href="https://github.com/yourusername" target="_blank">GitHub</a></p>
+  <p><a href="https://linkedin.com/in/yourprofile" target="_blank">LinkedIn</a></p>
 </section>
 
 <footer>
   <p>© 2026 Your Name</p>
 </footer>
 
+<!-- TERMINAL -->
+<div id="terminalOverlay">
+  <div class="closeBtn" onclick="closeTerminal()">✖</div>
+  <div id="terminal"></div>
+</div>
+
 <script>
-function scrollToProjects(){
-  document.getElementById('projects').scrollIntoView();
+function scrollToProjects(){document.getElementById('projects').scrollIntoView();}
+function downloadCV(){window.open('your-cv-link.pdf','_blank');}
+
+// LOAD GITHUB PROJECTS
+fetch('https://api.github.com/users/yourusername/repos')
+.then(res=>res.json())
+.then(data=>{
+  const container=document.getElementById('projectsContainer');
+  data.slice(0,6).forEach(repo=>{
+    const div=document.createElement('div');
+    div.className='card';
+    div.innerHTML=`<h3>${repo.name}</h3><p>${repo.description||'No description'}</p><a href="${repo.html_url}" target="_blank">View Code</a>`;
+    container.appendChild(div);
+  });
+});
+
+// TERMINAL
+function openTerminal(){document.getElementById('terminalOverlay').style.display='flex';startTerminal();}
+function closeTerminal(){document.getElementById('terminalOverlay').style.display='none';}
+
+const terminal=document.getElementById('terminal');
+function printLine(t){const d=document.createElement('div');d.textContent=t;terminal.appendChild(d);terminal.scrollTop=terminal.scrollHeight;}
+
+function createInput(){
+  const line=document.createElement('div');
+  const input=document.createElement('input');
+  line.append('> ',input);
+  terminal.appendChild(line);
+  input.focus();
+
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      handleCommand(input.value);
+      input.disabled=true;
+      createInput();
+    }
+  });
+}
+
+function handleCommand(cmd){
+  cmd=cmd.toLowerCase();
+  if(cmd==='help'){printLine('help, about, projects, exit');}
+  else if(cmd==='about'){printLine('Creative developer building modern apps.');}
+  else if(cmd==='projects'){printLine('Check the main page projects 👀');}
+  else if(cmd==='exit'){closeTerminal();}
+  else{printLine('Unknown command');}
+}
+
+function startTerminal(){
+  terminal.innerHTML='';
+  printLine('Welcome to hidden terminal');
+  printLine("Type 'help'");
+  createInput();
 }
 </script>
 
