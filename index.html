@@ -3,146 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultimate Portfolio • Polished</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
+<title>3D Portfolio</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a}
-
-header{display:flex;justify-content:space-between;align-items:center;padding:18px 36px;background:#ffffff;box-shadow:0 2px 12px rgba(0,0,0,0.06);position:sticky;top:0;z-index:10}
-nav a{margin-left:18px;text-decoration:none;color:#334155;font-weight:500}
-nav a:hover{color:#2563eb}
-
-.hero{padding:90px 20px;text-align:center}
-.hero h1{font-size:2.6rem}
-.hero p{margin-top:10px;color:#64748b}
-.btn{margin-top:20px;padding:12px 22px;border:none;background:#2563eb;color:#fff;border-radius:6px;cursor:pointer}
-.btn.secondary{background:#0ea5e9;margin-left:10px}
-
-section{padding:60px 20px;max-width:1000px;margin:auto}
-h2{margin-bottom:20px}
-
-.skills span{display:inline-block;background:#e2e8f0;padding:8px 12px;margin:5px;border-radius:6px;font-size:14px}
-
-.projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
-.card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.06);transition:0.2s}
-.card:hover{transform:translateY(-5px)}
-.card a{display:inline-block;margin-top:10px;color:#2563eb;text-decoration:none;font-size:14px}
-
-footer{text-align:center;padding:25px;color:#64748b}
-
-/* TERMINAL OVERLAY */
-#terminalOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;color:#00ffcc;display:none;flex-direction:column;font-family:monospace;z-index:20}
-#terminal{padding:20px;flex:1;overflow-y:auto}
-input{background:#000;border:none;color:#00ffcc;outline:none;font-family:inherit}
-.closeBtn{position:absolute;top:10px;right:20px;color:#fff;cursor:pointer}
-
+body { margin:0; overflow:hidden; }
+canvas { display:block; }
+#overlay {
+  position:absolute;
+  top:20px;
+  left:20px;
+  color:white;
+  font-family:Arial;
+}
 </style>
 </head>
 <body>
+<div id="overlay">Use mouse to look around • Scroll to zoom</div>
 
-<header>
-  <h2>Your Name</h2>
-  <nav>
-    <a href="#">Home</a>
-    <a href="#projects">Projects</a>
-    <a href="#contact">Contact</a>
-    <a href="#" onclick="openTerminal()">Terminal</a>
-  </nav>
-</header>
-
-<section class="hero">
-  <h1>Frontend Developer</h1>
-  <p>I build clean, fast, and user-friendly web applications.</p>
-  <button class="btn" onclick="scrollToProjects()">View Projects</button>
-  <button class="btn secondary" onclick="downloadCV()">Download CV</button>
-</section>
-
-<section>
-  <h2>Skills</h2>
-  <div class="skills">
-    <span>HTML</span><span>CSS</span><span>JavaScript</span><span>React</span>
-  </div>
-</section>
-
-<section id="projects">
-  <h2>Projects</h2>
-  <div class="projects" id="projectsContainer"></div>
-</section>
-
-<section id="contact">
-  <h2>Contact</h2>
-  <p>Email: your@email.com</p>
-  <p><a href="https://github.com/yourusername" target="_blank">GitHub</a></p>
-  <p><a href="https://linkedin.com/in/yourprofile" target="_blank">LinkedIn</a></p>
-</section>
-
-<footer>
-  <p>© 2026 Your Name</p>
-</footer>
-
-<!-- TERMINAL -->
-<div id="terminalOverlay">
-  <div class="closeBtn" onclick="closeTerminal()">✖</div>
-  <div id="terminal"></div>
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
-function scrollToProjects(){document.getElementById('projects').scrollIntoView();}
-function downloadCV(){window.open('your-cv-link.pdf','_blank');}
+// SCENE
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000000);
 
-// LOAD GITHUB PROJECTS
-fetch('https://api.github.com/users/yourusername/repos')
-.then(res=>res.json())
-.then(data=>{
-  const container=document.getElementById('projectsContainer');
-  data.slice(0,6).forEach(repo=>{
-    const div=document.createElement('div');
-    div.className='card';
-    div.innerHTML=`<h3>${repo.name}</h3><p>${repo.description||'No description'}</p><a href="${repo.html_url}" target="_blank">View Code</a>`;
-    container.appendChild(div);
-  });
+// CAMERA
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.z = 5;
+
+// RENDERER
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// CUBE (your "project")
+const geometry = new THREE.BoxGeometry();
+const material = new THREE.MeshBasicMaterial({ color: 0x00ffcc, wireframe: true });
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
+
+// PARTICLES (stars)
+const particlesGeometry = new THREE.BufferGeometry();
+const particlesCount = 2000;
+const posArray = new Float32Array(particlesCount * 3);
+
+for(let i=0;i<particlesCount*3;i++){
+  posArray[i] = (Math.random() - 0.5) * 50;
+}
+
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+const particlesMaterial = new THREE.PointsMaterial({ size: 0.05 });
+const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particlesMesh);
+
+// MOUSE MOVE
+let mouseX = 0;
+let mouseY = 0;
+
+document.addEventListener('mousemove', (event) => {
+  mouseX = (event.clientX / window.innerWidth - 0.5) * 2;
+  mouseY = (event.clientY / window.innerHeight - 0.5) * 2;
 });
 
-// TERMINAL
-function openTerminal(){document.getElementById('terminalOverlay').style.display='flex';startTerminal();}
-function closeTerminal(){document.getElementById('terminalOverlay').style.display='none';}
+// ANIMATE
+function animate() {
+  requestAnimationFrame(animate);
 
-const terminal=document.getElementById('terminal');
-function printLine(t){const d=document.createElement('div');d.textContent=t;terminal.appendChild(d);terminal.scrollTop=terminal.scrollHeight;}
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
 
-function createInput(){
-  const line=document.createElement('div');
-  const input=document.createElement('input');
-  line.append('> ',input);
-  terminal.appendChild(line);
-  input.focus();
+  camera.position.x += (mouseX - camera.position.x) * 0.05;
+  camera.position.y += (-mouseY - camera.position.y) * 0.05;
+  camera.lookAt(scene.position);
 
-  input.addEventListener('keydown',e=>{
-    if(e.key==='Enter'){
-      handleCommand(input.value);
-      input.disabled=true;
-      createInput();
-    }
-  });
+  renderer.render(scene, camera);
 }
 
-function handleCommand(cmd){
-  cmd=cmd.toLowerCase();
-  if(cmd==='help'){printLine('help, about, projects, exit');}
-  else if(cmd==='about'){printLine('Creative developer building modern apps.');}
-  else if(cmd==='projects'){printLine('Check the main page projects 👀');}
-  else if(cmd==='exit'){closeTerminal();}
-  else{printLine('Unknown command');}
-}
+animate();
 
-function startTerminal(){
-  terminal.innerHTML='';
-  printLine('Welcome to hidden terminal');
-  printLine("Type 'help'");
-  createInput();
-}
+// RESPONSIVE
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 </script>
 
 </body>
